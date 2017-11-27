@@ -2,6 +2,7 @@ package Visitor;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 
@@ -15,6 +16,7 @@ public class MethodInvocationVisitor extends Visitor {
 	List<SuperMethodInvocation> superMethods = new ArrayList<SuperMethodInvocation>();
 	
 	static LinkedHashMap<MethodInvocation, ArrayList<MethodInvocation>> invokedMethodsByMethod = new LinkedHashMap<>();
+	
 	
 	public boolean visit(MethodInvocation node) {
 		methods.add(node);

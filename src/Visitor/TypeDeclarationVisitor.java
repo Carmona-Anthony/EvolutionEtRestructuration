@@ -1,14 +1,19 @@
 package Visitor;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
+import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.FieldDeclaration;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
+import org.eclipse.jdt.core.dom.MethodInvocation;
+import org.eclipse.jdt.core.dom.SimpleName;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
 
 public class TypeDeclarationVisitor extends Visitor {
@@ -18,13 +23,23 @@ public class TypeDeclarationVisitor extends Visitor {
 	static List<TypeDeclaration> types = new ArrayList<TypeDeclaration>();
 	static HashMap<TypeDeclaration, List<MethodDeclaration>> methodsByType = new HashMap<>();
 	static HashMap<TypeDeclaration, List<FieldDeclaration>> fieldsByType = new HashMap<>();
-	
+	static LinkedHashMap<String, LinkedHashMap<String, LinkedHashSet<MethodInvocation>>> fullPackage = new LinkedHashMap<>();
+
 	public boolean visit(TypeDeclaration node) {
 		
 		MethodDeclarationVisitor methodVisitor = new MethodDeclarationVisitor();
 		FieldVisitor fieldVisitor = new FieldVisitor();
 		node.accept(methodVisitor);
 		node.accept(fieldVisitor);
+		
+		for(MethodDeclaration method : methodVisitor.getMethods()) {
+			 method.accept(new ASTVisitor() {
+				 public boolean visit(MethodInvocation methodInvocation) {
+					 fullPackage.computeIfAbsent(node.getName().toString(), k-> new LinkedHashMap<String, LinkedHashSet<MethodInvocation>>()).computeIfAbsent(method.getName().toString(), k-> new LinkedHashSet<MethodInvocation>()).add(methodInvocation);
+					 return true;
+				 }
+			 });
+		}
 		
 		methodsByType.put(node, methodVisitor.getMethods());
 		fieldsByType.put(node, fieldVisitor.getFields());
@@ -34,6 +49,9 @@ public class TypeDeclarationVisitor extends Visitor {
 		return super.visit(node);
 	}
 	
+	public static LinkedHashMap<String, LinkedHashMap<String, LinkedHashSet<MethodInvocation>>> getFullPackage(){
+		return fullPackage;
+	}
 	public static HashMap<TypeDeclaration, List<MethodDeclaration>> getMethodsByType(){
 		return methodsByType;
 	}

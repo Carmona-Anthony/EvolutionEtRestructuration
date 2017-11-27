@@ -1,5 +1,3 @@
-
-
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -8,6 +6,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -28,6 +27,7 @@ import org.eclipse.jdt.core.dom.FieldDeclaration;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.MethodInvocation;
 import org.eclipse.jdt.core.dom.PackageDeclaration;
+import org.eclipse.jdt.core.dom.SimpleName;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 
@@ -46,7 +46,7 @@ public class Parser {
 	static HashSet<String> packages = new HashSet<>();
 	static HashMap<MethodDeclaration,Integer> methodlineCounter = new HashMap<>();
 	static HashMap<TypeDeclaration,Integer> lineCounter = new HashMap<>();
-	static LinkedHashMap<MethodInvocation, ArrayList<MethodInvocation>> invokedMethodsByMethod = new LinkedHashMap<>();
+	static LinkedHashMap<String, LinkedHashMap<String, LinkedHashSet<MethodInvocation>>> methodInvocByMethodsByType = new LinkedHashMap<>(); //C'est sur ca qu'il faut faire le graphe
 	
 	Parser(){
 		visitors = new ArrayList<>();
@@ -95,12 +95,10 @@ public class Parser {
 		
 		System.out.println("----------" + " Nombre de parametres maximaux" + "----------");
 		System.out.println(MethodDeclarationVisitor.getMaxParameter());
-		invokedMethodsByMethod = MethodInvocationVisitor.getInvokedMethodsByMethod();
+		methodInvocByMethodsByType = TypeDeclarationVisitor.getFullPackage();
+		System.out.println(methodInvocByMethodsByType);
 	}
 	
-	public LinkedHashMap<MethodInvocation, ArrayList<MethodInvocation>> getInvokedMethods(){
-		return invokedMethodsByMethod;
-	}
 	public HashMap<TypeDeclaration, List<MethodDeclaration>> methodsByLineNumber(double percentage) {
 		
 		HashMap<TypeDeclaration, List<MethodDeclaration>> methodsByType = TypeDeclarationVisitor.getMethodsByType();
