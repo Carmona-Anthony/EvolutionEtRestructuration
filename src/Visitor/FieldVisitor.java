@@ -1,22 +1,32 @@
 package Visitor;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
-import org.eclipse.jdt.core.dom.FieldDeclaration;
+import org.eclipse.jdt.core.dom.*;
+
+import decorator.FieldDecorator;
 
 public class FieldVisitor extends Visitor {
-
 	
-	List<FieldDeclaration> fields = new ArrayList<>();
+	FieldVisitor(CompilationUnit cu) {
+		super(cu);
+		// TODO Auto-generated constructor stub
+	}
+
+	List<FieldDecorator> fields = new ArrayList<>();
 	
 	public boolean visit(FieldDeclaration node) {
-		fields.add(node);
+		
+		fields.add(new FieldDecorator(node));
 		return super.visit(node);
 	}
-	
-	public List<FieldDeclaration> getFields() {
+
+	@Override
+	public List<FieldDecorator> get() {
+		// TODO Auto-generated method stub
 		return fields;
 	}
+	
+	
 }

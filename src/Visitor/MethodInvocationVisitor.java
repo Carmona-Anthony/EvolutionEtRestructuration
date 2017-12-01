@@ -1,57 +1,46 @@
 package Visitor;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 
 import org.eclipse.jdt.core.dom.ASTVisitor;
+import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.MethodInvocation;
 import org.eclipse.jdt.core.dom.SuperMethodInvocation;
 
+import decorator.InvocationMethodDecorator;
+
 public class MethodInvocationVisitor extends Visitor {
 	
-	List<MethodInvocation> methods = new ArrayList<MethodInvocation>();
+	List<InvocationMethodDecorator> methods = new ArrayList<>();
 	List<SuperMethodInvocation> superMethods = new ArrayList<SuperMethodInvocation>();
 	
-	static LinkedHashMap<MethodInvocation, ArrayList<MethodInvocation>> invokedMethodsByMethod = new LinkedHashMap<>();
-	
+	MethodInvocationVisitor(CompilationUnit cu) {
+		super(cu);
+	}
 	
 	public boolean visit(MethodInvocation node) {
-		methods.add(node);
-		
-		 node.accept(new ASTVisitor() {
-			 public boolean visit(MethodInvocation methodInvocation) {
-				 
-				 invokedMethodsByMethod.computeIfAbsent(node, k -> new ArrayList<MethodInvocation>()).add(methodInvocation);
-				 
-				 return true; 
-			 }
-		 });
+		//if(node.resolveMethodBinding() != null) {
+			methods.add(new InvocationMethodDecorator(node));
+		//}
 		 
 		return super.visit(node);
 	}
 	
-	public static LinkedHashMap<MethodInvocation, ArrayList<MethodInvocation>> getInvokedMethodsByMethod(){
-		return invokedMethodsByMethod;
-	}
 	@Override
 	public boolean visit(SuperMethodInvocation node) {
 		superMethods.add(node);
 		return super.visit(node);
 	}
-
-	
-	public List<MethodInvocation> getMethods() {
-		return methods;
-	}
 	
 	public List<SuperMethodInvocation> getSuperMethod() {
 		return superMethods;
 	}
-	
-	public void printInvokedMethods() {
-		
+
+	@Override
+	public List<InvocationMethodDecorator> get() {
+		// TODO Auto-generated method stub
+		return methods;
 	}
 }

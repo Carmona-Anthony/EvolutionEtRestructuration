@@ -1,52 +1,87 @@
 package Visitor;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
 import org.eclipse.jdt.core.dom.ASTVisitor;
+import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.FieldDeclaration;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.MethodInvocation;
-import org.eclipse.jdt.core.dom.SimpleName;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
+
+import decorator.TypeDecorator;
 
 public class TypeDeclarationVisitor extends Visitor {
 	
 	static int typesCount = 0;
 	
-	static List<TypeDeclaration> types = new ArrayList<TypeDeclaration>();
+	//A oublier
+	List<TypeDecorator> types = new ArrayList<>();
 	static HashMap<TypeDeclaration, List<MethodDeclaration>> methodsByType = new HashMap<>();
 	static HashMap<TypeDeclaration, List<FieldDeclaration>> fieldsByType = new HashMap<>();
 	static LinkedHashMap<String, LinkedHashMap<String, LinkedHashSet<MethodInvocation>>> fullPackage = new LinkedHashMap<>();
+	
+	CompilationUnit compilationUnit;
+	TypeDeclaration currentType;
+	TypeDecorator currentDecorator;
+	
+	/**
+	 * Constructor
+	 * @param cu
+	 */
+	public TypeDeclarationVisitor(CompilationUnit cu) {
+		super(cu);
+	}
+
+	
+	public boolean visit(CompilationUnit cu) {
+		//Save the root of the file
+		compilationUnit = cu;
+		
+		return super.visit(cu);
+	}
 
 	public boolean visit(TypeDeclaration node) {
 		
-		MethodDeclarationVisitor methodVisitor = new MethodDeclarationVisitor();
-		FieldVisitor fieldVisitor = new FieldVisitor();
+		TypeDecorator typeDecorator = new TypeDecorator(node);
+		
+		types.add(typeDecorator);
+		
+		currentType = node;
+		currentDecorator = typeDecorator;
+		
+		MethodDeclarationVisitor methodVisitor = new MethodDeclarationVisitor(compilationUnit);
+		FieldVisitor fieldVisitor = new FieldVisitor(compilationUnit);
+		
 		node.accept(methodVisitor);
 		node.accept(fieldVisitor);
 		
-		for(MethodDeclaration method : methodVisitor.getMethods()) {
-			 method.accept(new ASTVisitor() {
-				 public boolean visit(MethodInvocation methodInvocation) {
-					 fullPackage.computeIfAbsent(node.getName().toString(), k-> new LinkedHashMap<String, LinkedHashSet<MethodInvocation>>()).computeIfAbsent(method.getName().toString(), k-> new LinkedHashSet<MethodInvocation>()).add(methodInvocation);
-					 return true;
-				 }
-			 });
-		}
+		currentDecorator.setFields(fieldVisitor.get());
+		currentDecorator.setMethods(methodVisitor.get());
 		
-		methodsByType.put(node, methodVisitor.getMethods());
-		fieldsByType.put(node, fieldVisitor.getFields());
-		
-		typesCount++;
-		types.add(node);
 		return super.visit(node);
+	}
+	
+	public void endVisit(TypeDeclaration node) {
+		int startLine = compilationUnit.getLineNumber(currentType.getStartPosition());
+		int endLine = compilationUnit.getLineNumber(currentType.getStartPosition() + currentType.getLength() - 1);
+		currentDecorator.setNbLines(endLine - startLine);
+	}
+	
+	
+	public void endVisit(CompilationUnit cu) {
+		super.root = null;
+	}
+	
+	@Override
+	public List<TypeDecorator> get() {
+		// TODO Auto-generated method stub
+		return types;
 	}
 	
 	public static LinkedHashMap<String, LinkedHashMap<String, LinkedHashSet<MethodInvocation>>> getFullPackage(){
@@ -104,10 +139,6 @@ public class TypeDeclarationVisitor extends Visitor {
 		return results;
 	}
 	
-	public List<TypeDeclaration> getTypes() {
-		return types;
-	}
-	
 	public int getNbFields() {
 		int totalFieldCount = 0;
 		
@@ -138,6 +169,7 @@ public class TypeDeclarationVisitor extends Visitor {
 		
 		return totalMethodCount/typesCount;
 	}
+	
 	public String toString() {
 		String result = "";
 		for(Entry<TypeDeclaration, List<MethodDeclaration>> entry : methodsByType.entrySet()) {
