@@ -21,6 +21,10 @@ public class InvocationMethodDecorator extends Decorator {
 		return null;
 	}
 	
+	public IMethodBinding getBinding() {
+		return binding;
+	}
+	
 	public String toString() {
 		return name;
 	}
