@@ -43,6 +43,10 @@ public class Cluster {
 			valueByCluster.remove(cluster);
 		}
 	}
+	
+	public void add(Cluster cluster, Integer value) {
+		valueByCluster.put(cluster, value);
+	}
 
 	public Cluster getMaxCluster() {
 
@@ -54,7 +58,6 @@ public class Cluster {
 				maxValue = entry.getValue();
 			}
 		}
-
 		return maxCluster;
 	}
 
@@ -74,7 +77,7 @@ public class Cluster {
 
 		StringBuilder builder = new StringBuilder();
 		builder.append(name);
-		builder.append(" -> ");
+		/*builder.append(" -> ");
 		builder.append("[ ");
 
 		for (Entry<Cluster, Integer> entry : valueByCluster.entrySet()) {
@@ -82,7 +85,7 @@ public class Cluster {
 			builder.append(",");
 		}
 
-		builder.append("]");
+		builder.append("]");*/
 
 		return builder.toString();
 	}

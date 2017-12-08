@@ -2,7 +2,6 @@ package Cluster;
 
 import java.util.Comparator;
 import java.util.List;
-import java.util.Map.Entry;
 import java.util.PriorityQueue;
 
 public class ClusterManager {
@@ -13,7 +12,6 @@ public class ClusterManager {
 	ClusterManager(List<Cluster> clusters) {
 
 		this.clusters = clusters;
-
 		// Init next Cluster list
 		ClusterComparator comparator = new ClusterComparator();
 		nextCluster = new PriorityQueue<Cluster>(clusters.size(), comparator);
@@ -34,11 +32,25 @@ public class ClusterManager {
 	public void add(Cluster cluster) {
 		clusters.add(cluster);
 		nextCluster.add(cluster);
+		
+		for(Cluster c : cluster.getValues().keySet()) {
+			c.add(cluster, cluster.getValue(c));
+		}
 	}
 	
 	public Cluster getNext() {
+		
+		System.out.println(nextCluster);
+		
+		nextCluster.clear();
+		for(Cluster c : clusters) {
+			if(c.getValues().size() > 0) {
+				nextCluster.add(c);
+			}
+		}
+		
 		if(!nextCluster.isEmpty()) {
-			return nextCluster.peek();
+			if(nextCluster.peek().valueByCluster.size() > 0) return nextCluster.peek();
 		}
 		return null;
 	}
