@@ -7,6 +7,7 @@ public class MultipleCluster extends Cluster {
 
 	Cluster clusterA;
 	Cluster clusterB;
+	int similarityValue;
 
 	MultipleCluster(String name, Cluster A, Cluster B) {
 		super(name);
