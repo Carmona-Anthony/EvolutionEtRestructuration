@@ -1,0 +1,112 @@
+body svg{
+    margin: 0;
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+}
+
+header{
+    display: flex;
+    position: fixed;
+    top:0;
+    left: 0;
+    width: 100%;
+    height: auto;
+    justify-content: space-around;
+    background-color: white;
+    border-bottom: 1px solid black;
+    z-index:999;
+}
+
+header div{
+    display: flex;
+    align-items: center;
+}
+
+.settings{
+    position: fixed;
+    opacity: 0.1;
+    background-color: rgb(0,0,0);
+    color:rgb(0,0,0);
+    padding:5px;
+    top:50px;
+    left:0;
+    height: auto;
+    width:auto;
+    z-index: 500;
+}
+
+.settings:hover{
+    background-color: rgba(0,0,0,0.5);
+    color:white;
+    opacity: 1;
+}
+
+.links path {
+    stroke: #99212b;
+    stroke-opacity: 0.6;
+    fill: none;
+    stroke-width: 2px;
+}
+
+.nodes circle, .nodes rect{
+    stroke: #a9a929;
+    stroke-width: 1px;
+}
+
+.nodes g text{
+    color:black;
+}
+
+.links {
+    z-index: 1;
+}
+
+.nodes {
+    z-index: 2;
+}
+
+.text {
+    z-index: 0;
+}
+
+.hide{
+    display:none;
+}
+
+.colorElement li{
+    display: flex;
+    align-items: center;
+    list-style-type: none;
+}
+
+.colorElement li:before{
+    content:' ';
+    display: inline-block;
+    height: 1em;
+    width: 1em;
+    margin-right:5px;
+    border:1px solid white;
+}
+
+.colorElement .blue:before{
+    background-color: blue;
+}
+
+.colorElement .red:before{
+    background-color: red;
+}
+
+.colorElement .green:before{
+    background-color: green;
+}
+
+.colorElement .light-green:before{
+    background-color: #E3A003;
+}
+
+.colorElement .grey:before{
+    background-color: grey;
+}

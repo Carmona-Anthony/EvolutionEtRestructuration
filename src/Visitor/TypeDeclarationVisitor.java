@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
-import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.FieldDeclaration;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
@@ -20,7 +19,6 @@ public class TypeDeclarationVisitor extends Visitor {
 	
 	static int typesCount = 0;
 	
-	//A oublier
 	List<TypeDecorator> types = new ArrayList<>();
 	static HashMap<TypeDeclaration, List<MethodDeclaration>> methodsByType = new HashMap<>();
 	static HashMap<TypeDeclaration, List<FieldDeclaration>> fieldsByType = new HashMap<>();

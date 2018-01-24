@@ -40,17 +40,17 @@ public class ClusterManager {
 	
 	public Cluster getNext() {
 		
-		System.out.println(nextCluster);
-		
 		nextCluster.clear();
 		for(Cluster c : clusters) {
-			if(c.getValues().size() > 0) {
-				nextCluster.add(c);
-			}
+			nextCluster.add(c);
 		}
 		
+		System.out.println(nextCluster);
+		
 		if(!nextCluster.isEmpty()) {
-			if(nextCluster.peek().valueByCluster.size() > 0) return nextCluster.peek();
+			if(nextCluster.peek().valueByCluster.size() > 0) {
+				return nextCluster.peek();
+			}
 		}
 		return null;
 	}

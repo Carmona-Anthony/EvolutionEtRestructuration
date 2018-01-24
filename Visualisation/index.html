@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="style.css">
+    <title>D3 - Graph</title>
+</head>
+<body>
+<header>
+    <div></div>
+    <h3>Analyse statique de code d3.js</h3>
+    <div>Carmona Anthony / Pyz Maxime</div>
+</header>
+<div class="settings"> 
+    <h2>Help:</h2>
+    <ul>
+        <li> You can zoom and navigate</li>
+        <li> Drag methods around</li>
+        <li> Click on a Node to see more information</li>
+        <li> Hide non-related classes with <br> the checkbox</li>
+    </ul>
+    <h2>Legend</h2>
+    <ul class="colorElement">
+                <li class="light-green">Methods in project</li>
+                <li class="grey">Non-project methods</li>
+                <li class="blue">The next methods</li>
+                <li class="green">Current method</li>
+                <li class="red">Parent method</li>
+            </ul>
+    <h2>Options: </h2>
+    <label for="display">Display only current project </label><input type="checkbox" name="display" id="display"><br>
+    <div class="hide"><label for="charge">ForceManyBody </label><input type="number" name="charge" id="charge"></div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/lodash@4.17.4/lodash.min.js"></script>
+<script src="https://d3js.org/d3.v4.min.js"></script>
+<script src="main.js"></script>
+</body>
+</html>

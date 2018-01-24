@@ -15,4 +15,10 @@ public class Print {
 			System.out.println(t.toString());
 		}
 	}
+	
+	public static <T> void printList(List<T> list, String before) {
+		for(T t : list) {
+			System.out.println(before + t.toString());
+		}
+	}
 }

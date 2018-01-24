@@ -1,4 +1,4 @@
-package Cluster;
+"package Cluster;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -49,15 +49,18 @@ public class Dendrogram {
 		clusterManager = new ClusterManager(clusters);
 	}
 
-	public void createDendrogram() {
+	public Cluster createDendrogram() {
+		
 		Cluster A;
+		MultipleCluster multipleCluster = null;
+		
 		while ((A = clusterManager.getNext()) != null) {
 
 			Cluster B = A.getMaxCluster();
 
 			System.out.println(A + " -> " + B);
 
-			MultipleCluster multipleCluster = new MultipleCluster("C" + index, A, B);
+			multipleCluster = new MultipleCluster("C" + index, A, B);
 			clusterManager.add(multipleCluster);
 
 			index++;
@@ -65,5 +68,7 @@ public class Dendrogram {
 			clusterManager.remove(A);
 			clusterManager.remove(B);
 		}
+		System.out.println("Root : " + multipleCluster);
+		return multipleCluster;
 	}
 }
