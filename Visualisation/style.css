@@ -48,7 +48,7 @@ header div{
     stroke: #99212b;
     stroke-opacity: 0.6;
     fill: none;
-    stroke-width: 2px;
+    /*stroke-width: 2px;*/
 }
 
 .nodes circle, .nodes rect{
