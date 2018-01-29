@@ -18,8 +18,8 @@ import java.util.*;
 
 public class Parser {
 
-	public static final String projectPath = "C:\\Users\\Proprietaire\\eclipse-workspace\\BDD";
-	public static final String projectSourcePath = projectPath + "\\src";
+	public static final String projectPath = "../hmin304-TP1";
+	public static final String projectSourcePath = projectPath + "/src";
 	public static String jrePath = System.getProperty("java.home") + "\\lib\\rt.jar";
 	
 	static HashSet<String> packages = new HashSet<>();
@@ -245,16 +245,22 @@ public class Parser {
 		 */
 		Print.printTitle("Creation du graphe");
 		String jsonString = GraphCreator.createJsonGraph(methodInvocByMethodsByType);
-		Output output = new Output(".\\Visualisation\\input.json");
+		Output output = new Output("./Visualisation/input.json");
 		output.write(jsonString);
 		output.close();
 		Print.printValue(jsonString);
 		
-		/**
-		 * Creation of the dendogram and modules analysis
-		 */
+		Print.printTitle("TP2 :");
 		Print.printTitle("Creation du dendrogramme");
 		Integer[][] couplingArray = Coupleur.couple(types);
+		
+		Print.printTitle("création du graphe de couplage");
+		jsonString = GraphCreator.createJsonGraphCouplage(couplingArray, types);
+		output = new Output("./Visualisation/inputCouplage.json");
+		output.write(jsonString);
+		output.close();
+		Print.printValue(jsonString);
+		
 		Dendrogram dendrogram = new Dendrogram(types, couplingArray);
 		Cluster root = dendrogram.createDendrogram();
 		ClusterVisitor visitor = new ClusterVisitor();

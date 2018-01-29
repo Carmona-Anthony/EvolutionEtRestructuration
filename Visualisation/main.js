@@ -27,7 +27,7 @@ var svg = d3.select('body').
 var width = d3.select('body').node().getBoundingClientRect().width,
   height = d3.select('body').node().getBoundingClientRect().height
 
-d3.json('input.json', function (error, graph) {
+d3.json('inputCouplage.json', function (error, graph) {
   if (error) throw error
 
   window.document.getElementById('charge').value = config.forceManyStr
@@ -86,7 +86,20 @@ d3.json('input.json', function (error, graph) {
     enter().
     append('path').
     attr('marker-end', 'url(#triangle)').
-    attr('stroke-width', 1)
+    attr('stroke-width', function(d){
+      if(d.weight){  
+        return d.weight
+      }
+      return 2;
+    })
+
+  links.append("svg:title").text(function(d) {
+    if(d.weight){
+      return 'Weight : ' + d.weight; 
+    } else{  
+      return 'Weight : ' + d.str;
+    }
+  });
 
   var selection = {
 

@@ -8,11 +8,12 @@ import java.util.Map.Entry;
 import org.eclipse.jdt.core.dom.IMethodBinding;
 
 import decorator.InvocationMethodDecorator;
+import decorator.TypeDecorator;
 
 public class GraphCreator {
 
 	 public static String createJsonGraph(
-	            LinkedHashMap<String, LinkedHashMap<String, LinkedHashSet<InvocationMethodDecorator>>> methodInvocByMethodsByType) {
+	        LinkedHashMap<String, LinkedHashMap<String, LinkedHashSet<InvocationMethodDecorator>>> methodInvocByMethodsByType) {
 	        StringBuilder st = new StringBuilder();
 	        HashMap<String, Integer> nodes = new HashMap<>();
 	        HashMap<Integer, HashSet<Integer>> links = new HashMap<>();
@@ -100,4 +101,51 @@ public class GraphCreator {
 	        st.append("]}");
 	        return st.toString();
 	    }
+
+	public static String createJsonGraphCouplage(Integer[][] couplingArray, ArrayList<TypeDecorator> types) {
+		int min = 1;
+		int max = 5;
+
+		int yMax = 0;
+		int yMin = 0;
+
+		for(int i = 0; i<types.size(); i++) {
+			for(int j = 0; j<i; j++ ) {
+				if(yMax < couplingArray[i][j]) {
+					yMax = couplingArray[i][j];
+				}
+			}
+		}
+		
+		StringBuilder st = new StringBuilder();
+		st.append("{\"nodes\":[");
+		for(int i = 0; i<types.size(); i++) {
+            st.append("{\"id\":").append(i).append(",")
+              .append(" \"name\": \"").append(types.get(i).getName()).append("\"").append(",")
+              .append(" \"own\": ").append("true").append("},");
+        }
+        st.deleteCharAt(st.length() - 1);
+        st.append("], \"links\":[");
+        for(int i = 0; i<types.size(); i++) {
+        	for(int j = 0; j<=i; j++) {
+        		if(couplingArray[i][j] != 0) {
+        			System.out.println(yMax);
+        			
+        			double rawValue = (double) couplingArray[i][j];
+        			
+        			double percent = (rawValue - yMin) / (yMax - yMin);
+        			double weight = percent * (max - min) + min;
+        			
+        			st.append("{\"source\":").append(i).append(",")
+                    .append(" \"target\": ").append(j).append(",")
+                    .append(" \"str\": ").append(0.5).append(",")
+                    .append(" \"weight\": ").append(weight)
+                    .append("},");	
+        		}
+        	}
+        }
+        st.deleteCharAt(st.length() - 1);
+        st.append("]}");
+		return st.toString();
+	}
 }
