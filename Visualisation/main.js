@@ -86,7 +86,20 @@ d3.json('inputCouplage.json', function (error, graph) {
     enter().
     append('path').
     attr('marker-end', 'url(#triangle)').
-    attr('stroke-width', 5)
+    attr('stroke-width', function(d){
+      if(d.weight){  
+        return d.weight
+      }
+      return 2;
+    })
+
+  links.append("svg:title").text(function(d) {
+    if(d.weight){
+      return 'Weight : ' + d.weight; 
+    } else{  
+      return 'Weight : ' + d.str;
+    }
+  });
 
   var selection = {
 

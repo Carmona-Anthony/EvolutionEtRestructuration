@@ -103,6 +103,20 @@ public class GraphCreator {
 	    }
 
 	public static String createJsonGraphCouplage(Integer[][] couplingArray, ArrayList<TypeDecorator> types) {
+		int min = 1;
+		int max = 5;
+
+		int yMax = 0;
+		int yMin = 0;
+
+		for(int i = 0; i<types.size(); i++) {
+			for(int j = 0; j<i; j++ ) {
+				if(yMax < couplingArray[i][j]) {
+					yMax = couplingArray[i][j];
+				}
+			}
+		}
+		
 		StringBuilder st = new StringBuilder();
 		st.append("{\"nodes\":[");
 		for(int i = 0; i<types.size(); i++) {
@@ -115,9 +129,17 @@ public class GraphCreator {
         for(int i = 0; i<types.size(); i++) {
         	for(int j = 0; j<=i; j++) {
         		if(couplingArray[i][j] != 0) {
+        			System.out.println(yMax);
+        			
+        			double rawValue = (double) couplingArray[i][j];
+        			
+        			double percent = (rawValue - yMin) / (yMax - yMin);
+        			double weight = percent * (max - min) + min;
+        			
         			st.append("{\"source\":").append(i).append(",")
                     .append(" \"target\": ").append(j).append(",")
-                    .append(" \"str\": ").append(((double) couplingArray[i][j]) / 10.0)
+                    .append(" \"str\": ").append(0.5).append(",")
+                    .append(" \"weight\": ").append(weight)
                     .append("},");	
         		}
         	}
