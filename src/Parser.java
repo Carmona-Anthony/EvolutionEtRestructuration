@@ -7,6 +7,8 @@ import org.apache.commons.io.FileUtils;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.dom.*;
 
+import Cluster.Cluster;
+import Cluster.ClusterVisitor;
 import Cluster.Dendrogram;
 import FileHandling.Output;
 
@@ -237,18 +239,27 @@ public class Parser {
 				}
 			}
 		}
-
+		
+		/**
+		 * Graph creation
+		 */
 		Print.printTitle("Creation du graphe");
 		String jsonString = GraphCreator.createJsonGraph(methodInvocByMethodsByType);
 		Output output = new Output(".\\Visualisation\\input.json");
 		output.write(jsonString);
 		output.close();
 		Print.printValue(jsonString);
-
+		
+		/**
+		 * Creation of the dendogram and modules analysis
+		 */
 		Print.printTitle("Creation du dendrogramme");
 		Integer[][] couplingArray = Coupleur.couple(types);
 		Dendrogram dendrogram = new Dendrogram(types, couplingArray);
-		dendrogram.createDendrogram();
+		Cluster root = dendrogram.createDendrogram();
+		ClusterVisitor visitor = new ClusterVisitor();
+		dendrogram.getModules(visitor, root);
+		System.out.println(visitor.getModules());
 		// dendrogram.getNextMaxCluster();
 		/*
 		 * String jsonString = createJsonGraph(methodInvocByMethodsByType);

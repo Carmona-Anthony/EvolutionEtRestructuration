@@ -2,6 +2,7 @@ package Cluster;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.PriorityQueue;
 
 public class ClusterManager {
@@ -36,6 +37,19 @@ public class ClusterManager {
 		for(Cluster c : cluster.getValues().keySet()) {
 			c.add(cluster, cluster.getValue(c));
 		}
+	}
+	
+	public int getMaxValue() {
+		
+		int value = 0;
+		if(!nextCluster.isEmpty()) {
+			for(Entry<Cluster,Integer> clusterValue : nextCluster.peek().getValues().entrySet()) {
+				if(clusterValue.getValue() > value) {
+					value = clusterValue.getValue();
+				}
+			}
+		} 
+		return value;
 	}
 	
 	public Cluster getNext() {

@@ -7,10 +7,12 @@ public class Cluster {
 
 	String name;
 	HashMap<Cluster, Integer> valueByCluster;
+	int similarityValue;
 
 	Cluster(String name) {
 		this.name = name;
 		this.valueByCluster = new HashMap<>();
+		similarityValue = -1;
 	}
 
 	Cluster(String name, HashMap<Cluster, Integer> valueByCluster) {
@@ -47,9 +49,9 @@ public class Cluster {
 	public void add(Cluster cluster, Integer value) {
 		valueByCluster.put(cluster, value);
 	}
-
-	public Cluster getMaxCluster() {
-
+	
+	public ClusterValuePair getMaxCluster() {
+		
 		Cluster maxCluster = null;
 		int maxValue = -1;
 		for (Entry<Cluster, Integer> entry : valueByCluster.entrySet()) {
@@ -58,7 +60,7 @@ public class Cluster {
 				maxValue = entry.getValue();
 			}
 		}
-		return maxCluster;
+		return new ClusterValuePair(maxCluster,maxValue);
 	}
 
 	public Integer getMaxValue() {
@@ -71,6 +73,21 @@ public class Cluster {
 		}
 
 		return maxValue;
+	}
+	
+	public int getSimi() {
+		return similarityValue;
+	}
+	
+	public void setSimi(int simi) {
+		if(similarityValue == -1 ) {
+			System.out.println("Set simi");
+			similarityValue = simi;
+		}
+	}
+	
+	public void accept(ClusterVisitor visitor) {
+		visitor.visit(this);
 	}
 
 	public String toString() {

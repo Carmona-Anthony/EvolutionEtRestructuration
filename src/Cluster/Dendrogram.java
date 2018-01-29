@@ -33,7 +33,7 @@ public class Dendrogram {
 					if (index != j) {
 						if(couplingArray[index][j] > 0) {
 							values.put(clusters.get(j), couplingArray[index][j]);
-							(clusters.get(j)).add(cluster, couplingArray[index][j]);
+							clusters.get(j).add(cluster, couplingArray[index][j]);
 						}
 					}
 				}
@@ -42,10 +42,6 @@ public class Dendrogram {
 			cluster.setValues(values);
 		}
 		
-		/*for(Cluster cluster : clusters) {
-			System.err.println(cluster);
-		}*/
-		// Create Manager
 		clusterManager = new ClusterManager(clusters);
 	}
 
@@ -55,20 +51,56 @@ public class Dendrogram {
 		MultipleCluster multipleCluster = null;
 		
 		while ((A = clusterManager.getNext()) != null) {
+			
+			ClusterValuePair clusterPair = A.getMaxCluster();
+			
+			System.out.println(A + " -> " + clusterPair.getCluster());
 
-			Cluster B = A.getMaxCluster();
-
-			System.out.println(A + " -> " + B);
-
-			multipleCluster = new MultipleCluster("C" + index, A, B);
+			multipleCluster = new MultipleCluster("C" + index, A, clusterPair.getCluster(),clusterPair.getValue());
+			
+			//Will only be called for non multiple cluster
+			A.setSimi(clusterPair.getValue());
+			clusterPair.getCluster().setSimi(clusterPair.getValue());
+			
 			clusterManager.add(multipleCluster);
 
 			index++;
 
 			clusterManager.remove(A);
-			clusterManager.remove(B);
+			clusterManager.remove(clusterPair.getCluster());
 		}
 		System.out.println("Root : " + multipleCluster);
 		return multipleCluster;
 	}
+	
+	public ArrayList<Cluster> getModules(ClusterVisitor visitor , Cluster root){
+		
+		if(root != null) {
+			root.accept(visitor);
+		}
+		
+		
+		/*if(root.clusterA != null) {
+			Cluster A = root.clusterA;
+			if(visitor.visit(A)) {
+				//Break
+			}
+			else {
+				Cluster B = root.clusterB;
+				if(visitor.visit(B)) {
+					//Break
+				}
+				else {
+					if(A instanceof MultipleCluster) {
+						getModules(visitor,(MultipleCluster) A);
+					}
+					if(B instanceof MultipleCluster) {
+						getModules(visitor,(MultipleCluster) B);
+					}
+				}
+			}
+		}*/
+		return null;
+	}
+	
 }

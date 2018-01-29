@@ -7,13 +7,13 @@ public class MultipleCluster extends Cluster {
 
 	Cluster clusterA;
 	Cluster clusterB;
-	int similarityValue;
 
-	MultipleCluster(String name, Cluster A, Cluster B) {
+	MultipleCluster(String name, Cluster A, Cluster B, int similarity) {
 		super(name);
 		clusterA = A;
 		clusterB = B;
 		setValues(calculateValue());
+		similarityValue = similarity;
 	}
 
 	private HashMap<Cluster, Integer> calculateValue() {
@@ -32,7 +32,10 @@ public class MultipleCluster extends Cluster {
 		
 		return result;
 	}
-
+	
+	public void accept(ClusterVisitor v) {
+		v.visit(this);
+	}
 	public String toString() {
 		return name;
 	}
