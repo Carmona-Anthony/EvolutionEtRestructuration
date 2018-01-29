@@ -129,7 +129,6 @@ public class GraphCreator {
         for(int i = 0; i<types.size(); i++) {
         	for(int j = 0; j<=i; j++) {
         		if(couplingArray[i][j] != 0) {
-        			System.out.println(yMax);
         			
         			double rawValue = (double) couplingArray[i][j];
         			
