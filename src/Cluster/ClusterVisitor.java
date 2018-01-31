@@ -14,14 +14,14 @@ public class ClusterVisitor {
 		
 		boolean findModule = false;
 		
-		if(cluster.similarityValue >= calculateAVGSimilarity(cluster.clusterA,cluster.clusterB)) {
+		if(cluster.similarityValue >= calculateAVGSimilarity(cluster.getClusterA(),cluster.getClusterB())) {
 			findModule = true;
 			modules.add(cluster);
 		}
 		
 		if(!findModule) {
-			cluster.clusterA.accept(this);
-			cluster.clusterB.accept(this);
+			cluster.getClusterA().accept(this);
+			cluster.getClusterB().accept(this);
 		}
 	}
 	
@@ -34,7 +34,7 @@ public class ClusterVisitor {
 	
 	public ArrayList<MultipleCluster> getModules(){
 		for(MultipleCluster multiple : modules) {
-			System.out.println(multiple + " : " + multiple.clusterA.toString() + " , " + multiple.clusterB.toString() );
+			System.out.println(multiple + " : " + multiple.getClusterA().toString() + " , " + multiple.getClusterB().toString() );
 		}
 		return modules;
 	}

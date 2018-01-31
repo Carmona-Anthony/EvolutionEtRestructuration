@@ -3,13 +3,17 @@ package Cluster;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
-public class Cluster {
+import DendrogramCreator.DendrogramGraphVisitor;
 
+public class Cluster {
+	
+	int id = -1;
 	String name;
 	HashMap<Cluster, Integer> valueByCluster;
 	int similarityValue;
 
-	Cluster(String name) {
+	Cluster(String name,int id) {
+		setId(id);
 		this.name = name;
 		this.valueByCluster = new HashMap<>();
 		similarityValue = -1;
@@ -81,15 +85,27 @@ public class Cluster {
 	
 	public void setSimi(int simi) {
 		if(similarityValue == -1 ) {
-			System.out.println("Set simi");
 			similarityValue = simi;
 		}
+	}
+	
+	public void accept(DendrogramGraphVisitor visitor) {
+		visitor.visit(this);
 	}
 	
 	public void accept(ClusterVisitor visitor) {
 		visitor.visit(this);
 	}
-
+	
+	public void setId(int newId) {
+		if(this.id == -1) {
+			this.id = newId;
+		}
+	}
+	
+	public int getId() {
+		return id;
+	}
 	public String toString() {
 
 		StringBuilder builder = new StringBuilder();

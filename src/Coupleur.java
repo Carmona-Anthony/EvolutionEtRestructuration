@@ -7,6 +7,20 @@ public class Coupleur {
 
 	static Integer[][] couplingArray;
 
+	public static Integer[][] callsMatrix(List<TypeDecorator> types){
+		 Integer[][] callsMatrix = new Integer[types.size()][types.size()];
+		 
+		 for (int i = 0; i < types.size(); i++) {
+				for (int j = 0; j <= i; j++) {
+					List<MethodDecorator> methodsA = types.get(i).getMethods();
+					int calls = getCallsNumber(methodsA, types.get(j));
+					callsMatrix[i][j] = calls;
+				}
+			}
+		
+		return callsMatrix;
+		
+	}
 	public static Integer[][] couple(List<TypeDecorator> types) {
 
 		couplingArray = new Integer[types.size()][types.size()];
@@ -32,16 +46,16 @@ public class Coupleur {
 	}
 
 	static int handleCouplage(TypeDecorator A, TypeDecorator B) {
-
+		
 		List<MethodDecorator> methodsA = A.getMethods();
 		List<MethodDecorator> methodsB = B.getMethods();
-
+		
 		int nbCallsA = getCallsNumber(methodsA, B);
 		int nbCallsB = getCallsNumber(methodsB, A);
 		
 		//System.out.println( "(" + A.getName() + "," + B.getName() + ")" + "-> " + (nbCallsA+nbCallsB));
 		
-		if(A.equals(B)) {
+		if(A.getName().equals(B.getName())) {
 			return nbCallsA;
 		}
 		
@@ -54,8 +68,11 @@ public class Coupleur {
 		int nbCalls = 0;
 		for (MethodDecorator methodA : listMethod) {
 			HashMap<String, Integer> couplageA = methodA.getCouplage();
-			if (couplageA.containsKey(type.getName()))
+
+			if (couplageA.containsKey(type.getName())) {
 				nbCalls += couplageA.get(type.getName());
+			}
+			else couplageA.put(type.getName(), 1);	
 		}
 
 		return nbCalls;

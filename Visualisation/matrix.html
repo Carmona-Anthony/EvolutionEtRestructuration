@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+
+<script src="http://d3js.org/d3.v2.min.js?2.8.1"></script>
+<body>
+<script>
+
+var matrixLines = new Array();
+var types = new Array();
+var maxValue = 0;
+
+function readTextFile(file)
+{
+    var rawFile = new XMLHttpRequest();
+    rawFile.open("GET", file, false);
+    rawFile.onreadystatechange = function ()
+    {
+        if(rawFile.readyState === 4)
+        {
+            if(rawFile.status === 200 || rawFile.status == 0)
+            {
+                var allText = rawFile.responseText;
+                var lines = allText.split("\n");
+                var allTypes = lines[0].split(";");
+                console.log(allTypes);
+                for(var i=0;i<allTypes.length - 1 ;i++){
+                    types[i] = allTypes[i];
+                }
+                console.log(types);
+                for (var i = 1; i < lines.length - 1 ; i++) {
+                    matrixLines[i-1] = new Array();
+                    var values = lines[i].split("|");
+                    for(var val=0;val < values.length - 1 ; val++){
+                        if(values[val] > maxValue){
+                            maxValue = values[val];
+                        }
+                        matrixLines[i-1][val] = values[val];
+                    }
+                }
+            }
+        }
+        console.log(types);
+        console.log(matrixLines);
+    }
+    rawFile.send(null);
+}
+readTextFile("file:///C:/Users/Proprietaire/eclipse-workspace/Evolution%20TP1/Visualisation/coupling.txt");
+
+var margin = {top: 200, right: 0, bottom: 0, left: 200},
+    width = 600,
+    height = 400;
+
+var svg = d3.select("body").append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+    .style("margin-left", margin.left + "px")
+  .append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+svg.append("rect")
+    .attr("class", "background")
+    .attr("width", width)
+    .attr("height", height);
+
+var numrows = 15;
+var numcols = 10;
+
+var matrix = new Array(matrixLines.length);
+for (var i = 0; i < matrixLines.length; i++) {
+  matrix[i] = new Array(matrixLines.length);
+  for (var j = 0; j < matrixLines.length; j++) {
+    matrix[i][j] = matrixLines[i][j]/maxValue;
+    console.log(matrixLines[i][j]/maxValue);
+  }
+}
+
+var x = d3.scale.ordinal()
+    .domain(d3.range(matrixLines.length))
+    .rangeBands([0, width]);
+
+var y = d3.scale.ordinal()
+    .domain(d3.range(matrixLines.length))
+    .rangeBands([0, height]);
+
+var rowLabels = new Array(matrixLines.length);
+for (var i = 0; i < matrixLines.length; i++) {
+  rowLabels[i] = types[i];
+}
+
+var columnLabels = new Array(matrixLines.length);
+for (var i = 0; i < matrixLines.length; i++) {
+  columnLabels[i] = types[i];
+}
+
+var colorMap = d3.scale.linear()
+    .domain([0, 0.5, 1])
+    .range(["white", "blue", "red"]);    
+    //.range(["red", "black", "green"]);
+    //.range(["brown", "#ddd", "darkgreen"]);
+
+var row = svg.selectAll(".row")
+    .data(matrix)
+    .enter().append("g")
+    .attr("class", "row")
+    .attr("transform", function(d, i) { return "translate(0," + y(i) + ")"; });
+
+row.selectAll(".cell")
+    .data(function(d) { return d; })
+    .enter().append("rect")
+    .attr("class", "cell")
+    .attr("x", function(d, i) { return x(i); })
+    .attr("width", x.rangeBand())
+    .attr("height", y.rangeBand())
+    .style("stroke-width", 0);
+
+row.append("line")
+    .attr("x2", width);
+
+row.append("text")
+    .attr("x", 0)
+    .attr("y", y.rangeBand() / 2)
+    .attr("dy", ".32em")
+    .attr("text-anchor", "end")
+    .text(function(d, i) { return types[i]; });
+
+var column = svg.selectAll(".column")
+    .data(columnLabels)
+    .enter().append("g")
+    .attr("class", "column")
+    .attr("transform", function(d, i) { return "translate(" + x(i) + ")rotate(-90)"; });
+
+column.append("line")
+    .attr("x1", -width);
+
+column.append("text")
+    .attr("x", 6)
+    .attr("y", y.rangeBand() / 2)
+    .attr("dy", ".32em")
+    .attr("text-anchor", "start")
+    .text(function(d, i) { return d; });
+
+row.selectAll(".cell")
+    .data(function(d, i) { return matrix[i]; })
+    .style("fill", colorMap);
+
+</script>

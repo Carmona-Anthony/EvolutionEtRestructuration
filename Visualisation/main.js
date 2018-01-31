@@ -10,6 +10,28 @@ var colors = {
   }
 }
 
+var fileValue = (new URL(document.location)).searchParams.get("file");
+var fileName;
+if(fileValue == null){
+  fileName = 'input.json';
+}
+else{
+  var element = document.getElementById('selector');
+  element.value = fileValue;
+
+  switch(fileValue){
+    case 'dendogramme':
+      fileName = 'inputDendogramme.json'
+      break;
+    case 'couplage':
+      fileName = 'inputCouplage.json'
+      break;
+    default:
+      fileName = 'input.json'
+      break;
+  }
+}
+
 var config = {
   nodeRadius: 20,
   forceManyStr: -400
@@ -27,7 +49,7 @@ var svg = d3.select('body').
 var width = d3.select('body').node().getBoundingClientRect().width,
   height = d3.select('body').node().getBoundingClientRect().height
 
-d3.json('inputCouplage.json', function (error, graph) {
+d3.json(fileName, function (error, graph) {
   if (error) throw error
 
   window.document.getElementById('charge').value = config.forceManyStr
@@ -276,4 +298,9 @@ window.document.getElementById('display').
         distanceMax(config.nodeRadius * 40))
       simulation.alphaTarget(0.3).restart()
     })
+})
+
+window.document.getElementById('selector').addEventListener('change', function(ev){
+  var value = this.options[this.selectedIndex].value;
+  window.location.href = '?file=' + value;
 })

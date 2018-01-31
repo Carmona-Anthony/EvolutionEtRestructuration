@@ -10,6 +10,7 @@ import org.eclipse.jdt.core.dom.*;
 import Cluster.Cluster;
 import Cluster.ClusterVisitor;
 import Cluster.Dendrogram;
+import DendrogramCreator.DendrogramGraphVisitor;
 import FileHandling.Output;
 
 import java.io.File;
@@ -18,7 +19,7 @@ import java.util.*;
 
 public class Parser {
 
-	public static final String projectPath = "../hmin304-TP1";
+	public static final String projectPath = "../Evolution TP1";
 	public static final String projectSourcePath = projectPath + "/src";
 	public static String jrePath = System.getProperty("java.home") + "\\lib\\rt.jar";
 	
@@ -251,21 +252,52 @@ public class Parser {
 		Print.printValue(jsonString);
 		
 		Print.printTitle("TP2 :");
-		Print.printTitle("Creation du dendrogramme");
+		Print.printTitle("Creation du couplage");
 		Integer[][] couplingArray = Coupleur.couple(types);
 		
-		Print.printTitle("création du graphe de couplage");
+		Integer[][] callsMatrix = Coupleur.callsMatrix(types);
+		StringBuilder builder = new StringBuilder();
+		for (TypeDecorator type : types) {
+			builder.append(type.getName() + ";");
+		}
+		builder.append("\n");
+		for (int i = 0; i < callsMatrix.length; i++) {
+			for (int j = 0; j < callsMatrix.length; j++) {
+				if(callsMatrix[i][j] == null) {
+					builder.append(callsMatrix[j][i] + "|");
+				}
+				else {
+					builder.append(callsMatrix[i][j] + "|");
+				}
+			}
+			builder.append("\n");
+		}
+		String array = builder.toString();
+		output = new Output("./Visualisation/coupling.txt");
+		output.write(array);
+		output.close();
+		
+		Print.printTitle("Creation du graphe de couplage");
 		jsonString = GraphCreator.createJsonGraphCouplage(couplingArray, types);
 		output = new Output("./Visualisation/inputCouplage.json");
 		output.write(jsonString);
 		output.close();
 		Print.printValue(jsonString);
 		
+		Print.printTitle("Creation du dendrogramme");
 		Dendrogram dendrogram = new Dendrogram(types, couplingArray);
 		Cluster root = dendrogram.createDendrogram();
 		ClusterVisitor visitor = new ClusterVisitor();
 		dendrogram.getModules(visitor, root);
 		System.out.println(visitor.getModules());
+		
+		Print.printTitle("Creation de la visualisation du dendrogramme");
+		DendrogramGraphVisitor graphVisitor = new DendrogramGraphVisitor();
+		Dendrogram.createVisualisation(graphVisitor, root);
+		
+		output = new Output("./Visualisation/inputDendogramme.json");
+		output.write(graphVisitor.getJson().toString());
+		output.close();
 		// dendrogram.getNextMaxCluster();
 		/*
 		 * String jsonString = createJsonGraph(methodInvocByMethodsByType);
